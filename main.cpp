@@ -40,6 +40,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 #include <string>
 #include <stdlib.h>
 #include <random>
@@ -58,7 +59,12 @@
  
 using namespace std;
 
-int main() {
+
+int main(int argc, char* argv[]) {
+	param->UpdateFromArgs(argc, argv);
+	cout << param->optimization_type << endl;
+	cout << param->numTrainImagesPerBatch << endl;
+	cout << param->nHide << endl;
 	gen.seed(0);
 	
 	/* Load in MNIST data */
@@ -84,7 +90,7 @@ int main() {
 	//arrayHO->Initialization<HybridCell>(); // the 3T1C+2PCM cell
 	//arrayHO->Initialization<_2T1F>();
 
-    omp_set_num_threads(16);
+    omp_set_num_threads(32);
 	/* Initialization of NeuroSim synaptic cores */
 	param->relaxArrayCellWidth = 0;
 	NeuroSimSubArrayInitialize(subArrayIH, arrayIH, inputParameterIH, techIH, cellIH);
@@ -133,7 +139,8 @@ int main() {
 	srand(0);	// Pseudorandom number seed
 	
 	ofstream mywriteoutfile;
-	mywriteoutfile.open("output.csv");                                                                                                            
+	string filename = string("output_")+ param->optimization_type+"_"+std::to_string(param->numTrainImagesPerBatch) +"_" + std::to_string(param->nHide) + ".csv";
+	mywriteoutfile.open(filename);                                                                                                            
 	for (int i=1; i<=param->totalNumEpochs/param->interNumEpochs; i++){
 		Train(param->numTrainImagesPerEpoch, param->interNumEpochs,param->optimization_type);
 		if (!param->useHardwareInTraining && param->useHardwareInTestingFF) { WeightToConductance(); }

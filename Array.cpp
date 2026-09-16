@@ -292,6 +292,13 @@ double Array::ConductanceToWeight(int x, int y, double maxWeight, double minWeig
 		/* Convert current to weight */
 		double Imax = static_cast<AnalogNVM*>(cell[x][y])->GetMaxReadCurrent(); // the current when Conductance is the minimum
 		double Imin = static_cast<AnalogNVM*>(cell[x][y])->GetMinReadCurrent(); // the current when Conductance is the maximum
+		
+		bool pfet = static_cast<AnalogNVM*>(cell[x][y])->GetPFet(); //Pfet neg current
+		if (pfet == true){
+			I = -1*I;
+			Imin = -1*Imin;
+			Imax = -1*Imax;
+		}
 		if (I<Imin)
 			I = Imin;
 		else if (I>Imax)
@@ -318,7 +325,6 @@ double Array::ConductanceToWeight(int x, int y, double maxWeight, double minWeig
                 I_LTP=Imax;
             else if(I_LTP<Imin)
                 I_LTP <Imin;
-                
             if(I_LTD>Imax)
                 I_LTD=Imax;
             else if(I_LTD<Imin)

@@ -37,6 +37,7 @@
 ********************************************************************************/
 
 #include <string>
+#include <cstring>
 #include "math.h"
 #include "Param.h"
 
@@ -47,8 +48,8 @@ Param::Param() {
 	
 	/* Algorithm parameters */
 	numTrainImagesPerEpoch = 8000;	// # of training images per epoch 
-    numTrainImagesPerBatch = 1;   // # of training images per batch. It is 1 for SGD
-	totalNumEpochs = 125;	// Total number of epochs
+    numTrainImagesPerBatch = 256;   // # of training images per batch. It is 1 for SGD
+	totalNumEpochs = 100;	// Total number of epochs
 	interNumEpochs = 1;		// Internal number of epochs (print out the results every interNumEpochs)
 	nInput = 400;     // # of neurons in input layer
 	nHide = 100;      // # of neurons in hidden layer
@@ -59,7 +60,7 @@ Param::Param() {
 	minWeight = -1;	// Lower bound of weight value
 	/*Optimization method 
 	Available option include: "SGD", "Momentum", "RMSprop" and "Adam"*/
-	optimization_type = "SGD";
+	optimization_type = "Adam";
 
 
 	/* Hardware parameters */
@@ -85,4 +86,32 @@ Param::Param() {
 	clkFreq = 2e9;		// Clock frequency (Hz)
  
 }
+void Param::UpdateFromArgs(int argc, char* argv[]) {
 
+    if (argc > 1) {
+		if (strcmp(argv[1], "SGD") == 0)
+
+			optimization_type = "SGD";
+
+		else if (strcmp(argv[1], "Momentum") == 0)
+
+			optimization_type = "Momentum";
+
+		else if (strcmp(argv[1], "RMSprop") == 0)
+
+			optimization_type = "RMSprop";
+
+		else if (strcmp(argv[1], "Adam") == 0)
+
+			optimization_type = "Adam";
+	    }
+
+    if (argc > 2) {
+        numTrainImagesPerBatch = atoi(argv[2]);
+    }
+
+	if (argc > 3) {
+        nHide = atoi(argv[3]);
+    }
+
+}
